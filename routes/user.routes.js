@@ -10,5 +10,8 @@ router.get('/user/tg_id/:id', userController.getUserByTgId);
 router.put('/user', userController.updateUser);
 router.delete('/user/:id', userController.deleteUser);
 
+router.get('/', (req, res) => {
+    res.send('API is working!');
+});
 
 module.exports = router;
