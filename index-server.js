@@ -11,13 +11,22 @@ const app = express();
 // Middleware
 app.use(express.json()); // Парсинг JSON
 app.use(cors({
-    origin: 'http://localhost:3000', // Укажите URL вашего React приложения
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешенные методы
-    allowedHeaders: ['Content-Type', 'Authorization'], // Разрешенные заголовки
+    origin: [
+        'http://localhost:3000', // Для разработки
+        'http://91.197.98.228:8080', // Укажите ваш домен или IP
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Обработка preflight-запросов
 app.options('*', cors());
+
+// Логирование запросов (для отладки CORS)
+app.use((req, res, next) => {
+    console.log(`CORS request from origin: ${req.headers.origin}`);
+    next();
+});
 
 // Роуты API
 app.use('/api', userRouter);
@@ -32,5 +41,11 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+// Обработка ошибок
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Internal Server Error');
+});
+
 // Запуск сервера
-app.listen(PORT, () => console.log(`Listening:${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
