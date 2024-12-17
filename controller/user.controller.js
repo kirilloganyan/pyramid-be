@@ -19,7 +19,7 @@ class UserController {
     async updateUser(req, res) {
         const {name, login,money,tg_id, id, contract} = req.body;
         const user = await db.query(
-            `UPDATE person set name = $1, login = $2, money = $3, tg_id = $4, contract = $5 WHERE id = $6 RETURNING *`,[name, login,money,tg_id, id]
+            `UPDATE person set name = $1, login = $2, money = $3, tg_id = $4, contract = $5 WHERE id = $6 RETURNING *`,[name, login,money,tg_id, id, contract]
         )
         res.json(user.rows[0]);
     }
@@ -58,20 +58,10 @@ class UserController {
             console.error('Error incrementing money:', error);
         }
     }
-    async incrementMoneyTest() {
-        try {
-            const result = await db.query(
-                `UPDATE person SET money = ROUND(money * 1.01, 2) WHERE money IS NOT NULL AND contract = true RETURNING *`
-            );
-            console.log(`Shiiiish! ${result.rowCount} users' money increased by 1%.`);
-        } catch (error) {
-            console.error('Error in test money increment:', error.message);
-        }
-    }
 }
 const userController = new UserController();
 
-cron.schedule('26 2 * * *', async () => {
+cron.schedule('28 2 * * *', async () => {
     console.log('Running daily incrementVariable task at 2:05 AM');
     await userController.incrementVariable();
 });
