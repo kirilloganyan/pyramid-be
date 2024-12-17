@@ -4,17 +4,22 @@ const cron = require('node-cron');
 class UserController {
     async createUser(req, res) {
             const {name, login,money,tg_id} = req.body;
-            const newPerson = await db.query(`INSERT INTO person (name,login,money, tg_id) values ($1, $2, $3, $4) RETURNING *`, [name, login,money, tg_id]);
-            res.json(newPerson.rows[0]);
+        const newPerson = await db.query(
+            `INSERT INTO person (name, login, money, tg_id, contract)
+             VALUES ($1, $2, $3, $4, $5)
+                 RETURNING *`,
+            [name, login, money, tg_id, contract]
+        );
+        res.json(newPerson.rows[0]);
     }
     async getUsers(req, res) {
         const users = await db.query(`SELECT * FROM person`);
         res.json(users.rows);
     }
     async updateUser(req, res) {
-        const {name, login,money,tg_id, id} = req.body;
+        const {name, login,money,tg_id, id, contract} = req.body;
         const user = await db.query(
-            `UPDATE person set name = $1, login = $2, money = $3, tg_id = $4 WHERE id = $5 RETURNING *`,[name, login,money,tg_id, id]
+            `UPDATE person set name = $1, login = $2, money = $3, tg_id = $4, contract = $5 WHERE id = $6 RETURNING *`,[name, login,money,tg_id, id]
         )
         res.json(user.rows[0]);
     }
@@ -56,7 +61,7 @@ class UserController {
     async incrementMoneyTest() {
         try {
             const result = await db.query(
-                `UPDATE person SET money = ROUND(money * 1.01, 2) WHERE money IS NOT NULL RETURNING *`
+                `UPDATE person SET money = ROUND(money * 1.01, 2) WHERE money IS NOT NULL AND contract = true RETURNING *`
             );
             console.log(`Shiiiish! ${result.rowCount} users' money increased by 1%.`);
         } catch (error) {
@@ -66,7 +71,7 @@ class UserController {
 }
 const userController = new UserController();
 
-cron.schedule('7 2 * * *', async () => {
+cron.schedule('26 2 * * *', async () => {
     console.log('Running daily incrementVariable task at 2:05 AM');
     await userController.incrementVariable();
 });
