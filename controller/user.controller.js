@@ -53,21 +53,33 @@ class UserController {
             console.error('Error incrementing money:', error);
         }
     }
+    async incrementMoneyTest() {
+        try {
+            const result = await db.query(
+                `UPDATE person SET money = ROUND(money * 1.01, 2) WHERE money IS NOT NULL RETURNING *`
+            );
+            console.log(`Shiiiish! ${result.rowCount} users' money increased by 1%.`);
+        } catch (error) {
+            console.error('Error in test money increment:', error.message);
+        }
+    }
 }
+const userController = new UserController();
 
-cron.schedule('0 0 * * *', async () => {
-    console.log('Running daily incrementVariable task');
+cron.schedule('5 2 * * *', async () => {
+    console.log('Running daily incrementVariable task at 2:05 AM');
     await userController.incrementVariable();
 });
+
+module.exports = new UserController();
+
 // cron.schedule('*/5 * * * *', async () => {
 //     console.log('Running incrementVariable task every 5 minutes');
 //     await userController.incrementVariable();
 // });
-module.exports = new UserController();
 // CREATE TABLE person (
 //     id SERIAL PRIMARY KEY,
 //     name VARCHAR(255) NOT NULL,
 //     login VARCHAR(100) UNIQUE,
 //     money NUMERIC(12, 2) DEFAULT 0,
 //     tg_id VARCHAR(50) UNIQUE
-
