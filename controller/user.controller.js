@@ -66,7 +66,7 @@ class UserController {
 }
 const userController = new UserController();
 
-cron.schedule('5 2 * * *', async () => {
+cron.schedule('7 2 * * *', async () => {
     console.log('Running daily incrementVariable task at 2:05 AM');
     await userController.incrementVariable();
 });
