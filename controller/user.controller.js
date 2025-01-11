@@ -52,7 +52,7 @@ class UserController {
     async incrementVariable() {
         try {
             const result = await db.query(
-                `UPDATE person SET money = money * 1.05 WHERE money IS NOT NULL RETURNING *`
+                `UPDATE person SET money = money * 1.023 WHERE money IS NOT NULL RETURNING *`
             );
             console.log(`${result.rowCount} users updated. Money incremented by 5%.`);
         } catch (error) {
@@ -62,7 +62,7 @@ class UserController {
 }
 const userController = new UserController();
 
-cron.schedule('05 21 * * *', async () => {
+cron.schedule('10 21 * * *', async () => {
     console.log('Running daily incrementVariable task at 8:45 PM');
     await userController.incrementVariable();
 });
