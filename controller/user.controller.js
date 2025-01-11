@@ -62,7 +62,7 @@ class UserController {
 }
 const userController = new UserController();
 
-cron.schedule('04 21 * * *', async () => {
+cron.schedule('05 21 * * *', async () => {
     console.log('Running daily incrementVariable task at 8:45 PM');
     await userController.incrementVariable();
 });
