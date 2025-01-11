@@ -3,7 +3,7 @@ const cron = require('node-cron');
 
 class UserController {
     async createUser(req, res) {
-            const {name, login,money,tg_id} = req.body;
+            const {name, login,money,tg_id, contract} = req.body;
         const userContract = contract !== undefined ? contract : false;
         const newPerson = await db.query(
             `INSERT INTO person (name, login, money, tg_id, contract)
